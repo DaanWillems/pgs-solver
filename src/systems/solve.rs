@@ -62,10 +62,23 @@ pub fn solve_collisions(query: Query<(&mut Position, &mut Velocity, &Mass)>,
 
         // let b = (-(1. / DELTA_TIME)*(contact.penetration_depth))+(e*(rel_normal_v));
 
+        // let b = -(e * rel_normal_v); //Without baumgarte
         let b = -(1./DELTA_TIME) * contact.penetration_depth + e * rel_normal_v;
         let lambda = (-(jv + b)) * meff;
 
         vel_a.0 += lambda * ja_va*w_a;
         vel_b.0 += lambda * ja_vb*w_b;
+
+        // //Compute position impulse for post projection
+        // let positionImpulse = meff * (1. * contact.penetration_depth);
+
+        // if mass_a.0 != 0. {
+        //     pos_a.0 -= (positionImpulse * contact.normal) / mass_a.0;
+        // }
+        // if mass_b.0 != 0. {
+        //     pos_b.0 += (positionImpulse * contact.normal) / mass_b.0;
+
+        // }
+
     }
 }

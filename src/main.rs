@@ -34,8 +34,8 @@ fn init_world(mut commands: Commands,
     //     spawn::spawn_circle(&mut commands, &mut meshes, &mut materials, Vec2::new( -200. + ((i as f32) *100.), 0.), Vec2::new( 0., 0.), 30., 20., false);
     // }
     // spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( -200., 0.), Vec2::new( 200., 0.), Vec2::new(20., 20.), 20., false);
-    // spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 200., 0.), Vec2::new( -200., 0.), Vec2::new(20., 20.), 20., false);
-    spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 00., 0.), Vec2::new( 0., 0.), Vec2::new(200., 200.), 0., false);
+    spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 0., -200.), Vec2::new( 0., 0.), Vec2::new(1600., 20.), 0., false);
+    // spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 00., 0.), Vec2::new( 0., 0.), Vec2::new(200., 200.), 0., false);
     spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 310., 0.), Vec2::new( 0., 0.), Vec2::new(100., 100.), 20., true);
 }
 

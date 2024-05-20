@@ -13,7 +13,7 @@ pub fn integrate(mut query: Query<(&mut Velocity, &mut Position, &mut Rotation, 
         }
 
         if mass.0 != 0. {
-            // velocity.0.y -= 9.81;
+            velocity.0.y -= 9.81;
         }
 
         position.0 += velocity.0 * DELTA_TIME;
