@@ -17,7 +17,7 @@ pub fn integrate(mut query: Query<(&mut Velocity, &mut Position, &mut Rotation, 
         }
 
         position.0 += velocity.0 * DELTA_TIME;
-        velocity.0 *= 0.995;
+        // velocity.0 *= 0.995;
 
         rotation.rotation += rotation.angular_velocity * DELTA_TIME;
         // velocity.0.y -= 9.81;

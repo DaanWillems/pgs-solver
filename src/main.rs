@@ -33,9 +33,8 @@ fn init_world(mut commands: Commands,
     // for i in 0..10 {
     //     spawn::spawn_circle(&mut commands, &mut meshes, &mut materials, Vec2::new( -200. + ((i as f32) *100.), 0.), Vec2::new( 0., 0.), 30., 20., false);
     // }
-    // spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( -200., 0.), Vec2::new( 200., 0.), Vec2::new(20., 20.), 20., false);
-    // spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 200., 0.), Vec2::new( -200., 0.), Vec2::new(20., 20.), 20., false);
-    spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 00., 0.), Vec2::new( 0., 0.), Vec2::new(200., 200.), 0., false);
-    spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 310., 0.), Vec2::new( 0., 0.), Vec2::new(100., 100.), 20., true);
+    spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( -200., 0.), Vec2::new( 200., 0.), Vec2::new(60., 60.), 20., false);
+    spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 200., 0.), Vec2::new( -200., 0.), Vec2::new(40., 40.), 20., false);
+    // spawn::spawn_rect(&mut commands, &mut meshes, &mut materials, Vec2::new( 210., 200.), Vec2::new( 0., 0.), Vec2::new(100., 100.), 20., true);
 }
 
