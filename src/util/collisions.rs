@@ -90,6 +90,12 @@ pub fn aabb_aabb_new(entity_a: Entity, pos_a: Vec2, aabb_a: &AABBCollider, entit
     ));
 }
 
+pub fn obb_obb(entity_a: Entity, pos_a: Vec2, angle_a: f32, aabb_a: &AABBCollider, entity_b: Entity, pos_b: Vec2, angle_b: f32, aabb_b: &AABBCollider) -> Option<Contact> {
+    for i in 0..3 {
+
+    }
+    return None;
+}
 pub fn aabb_aabb(entity_a: Entity, pos_a: Vec2, aabb_a: &AABBCollider, entity_b: Entity, pos_b: Vec2, aabb_b: &AABBCollider) -> Option<Contact> {
     //Initiate overlap
     let mut overlap = f32::INFINITY;
