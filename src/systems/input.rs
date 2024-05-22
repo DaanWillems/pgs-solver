@@ -38,7 +38,7 @@ pub fn input_handler(mut commands: Commands,
         velocity.0 += acceleration;
     }
 
-    if keys.just_pressed(KeyCode::Space) {
+    if keys.pressed(KeyCode::Space) {
         if let Some(world_position) = window
         .cursor_position()
         .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))

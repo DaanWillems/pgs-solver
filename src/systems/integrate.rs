@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use crate::components::*;
 
-pub const DELTA_TIME: f32 = 1. / 60.;
+pub const DELTA_TIME: f32 = 1. / 64.;
 
 pub fn integrate(mut query: Query<(&mut Velocity, &mut Position, &mut Rotation, &Mass)>) {
     for(mut velocity, mut position, mut rotation, mass) in query.iter_mut() {
@@ -13,11 +13,11 @@ pub fn integrate(mut query: Query<(&mut Velocity, &mut Position, &mut Rotation, 
         }
 
         if mass.0 != 0. {
-            // velocity.0.y -= 9.81;
+            velocity.0.y -= 9.81;
         }
 
         position.0 += velocity.0 * DELTA_TIME;
-        // velocity.0 *= 0.995;
+        velocity.0 *= 0.995;
 
         rotation.rotation += rotation.angular_velocity * DELTA_TIME;
         // velocity.0.y -= 9.81;
