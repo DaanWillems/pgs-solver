@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use bevy::sprite::MaterialMesh2dBundle;
 
-use crate::components::*;
+use crate::{components::*};
 
 pub fn spawn_circle(commands: &mut Commands, 
     meshes: &mut ResMut<Assets<Mesh>>, 
@@ -23,6 +23,7 @@ pub fn spawn_circle(commands: &mut Commands,
                 Player,
                 Position(pos),
                 Velocity(vel),
+                ZLevel(0.0),
                 Mass(mass),
                 Rotation{
                     rotation: 0.,
@@ -40,6 +41,7 @@ pub fn spawn_circle(commands: &mut Commands,
             commands.spawn((
                 Position(pos),
                 Velocity(vel),
+                ZLevel(0.0),
                 Mass(mass),
                 Rotation{
                     rotation: 0.,
@@ -74,6 +76,7 @@ pub fn spawn_rect(commands: &mut Commands,
                 Position(pos),
                 Velocity(vel+Vec2::new(0., -0.2)),
                 Mass(mass),
+                ZLevel(0.0),
                 Rotation{
                     rotation: 90.0_f32.to_radians(),
                     angular_velocity: 0.,
@@ -91,6 +94,7 @@ pub fn spawn_rect(commands: &mut Commands,
                 Position(pos),
                 Velocity(vel+Vec2::new(0., -0.2)),
                 Mass(mass),
+        ZLevel(0.0),
                 Rotation{
                     rotation: 0.,
                     angular_velocity: 0.,
@@ -110,6 +114,7 @@ pub fn spawn_rect_obb(commands: &mut Commands,
                     materials: &mut ResMut<Assets<ColorMaterial>>,
                     pos: Vec2,
                     vel: Vec2,
+                    rot: f32,
                     size: Vec2,
                     mass: f32,
                     player: bool) {
@@ -120,13 +125,14 @@ pub fn spawn_rect_obb(commands: &mut Commands,
     let material_handle = materials.add(color);
     commands.spawn((
         Position(pos),
+        ZLevel(0.0),
         Velocity(vel+Vec2::new(0., -0.2)),
         Mass(mass),
         Rotation{
-            rotation: 0.,
+            rotation: rot.to_radians(),
             angular_velocity: 0.,
         },
-        AABBCollider{half_size: size/2.},
+        ConvexCollider::from_rect(size/2.),
         MaterialMesh2dBundle {
         mesh: mesh_handle.into(),
         material: material_handle,

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use crate::components::*;
 use crate::util::spawn;
+use rand::Rng;
 
 pub fn input_handler(mut commands: Commands, 
     mut meshes: ResMut<Assets<Mesh>>,
@@ -43,7 +44,10 @@ pub fn input_handler(mut commands: Commands,
         .cursor_position()
         .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
-            spawn::spawn_circle(&mut commands, &mut meshes, &mut materials, Vec2::new(world_position.x.clone(), world_position.y.clone()), Vec2::new(0.0, 0.0), 40., 20., false);
+            let mut rng = rand::thread_rng();
+            // spawn::spawn_circle(&mut commands, &mut meshes, &mut materials, Vec2::new(world_position.x.clone(), world_position.y.clone()), Vec2::new(0.0, 0.0), 40., 20., false);
+            spawn::spawn_rect_obb(&mut commands, &mut meshes, &mut materials, Vec2::new(world_position.x.clone(), world_position.y.clone()), Vec2::new(0.0, 0.0),  rng.gen_range(0.0..360.0), Vec2::new(80., 80.), 20., false);
+            
         }
     }
 
