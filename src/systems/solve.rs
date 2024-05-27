@@ -2,8 +2,6 @@ use crate::components::*;
 use crate::resources::*;
 use bevy::prelude::*;
 
-use super::integrate::DELTA_TIME;
-
 pub fn pre_step(
     query: Query<(
         &mut Position,
@@ -51,7 +49,7 @@ pub fn pre_step(
         let mut impulses = Vec::new();
 
         for contact_point in manifold.contact_points.clone() {
-            let b = -(0.5 / time.delta_seconds()) * (f32::max(0., manifold.overlap - 0.05  ));
+            let b = -(0.5 / time.delta_seconds()) * (f32::max(0., manifold.overlap-0.05));
 
             let ra = contact_point - pos_a.0;
             let rb = contact_point - pos_b.0;
@@ -68,7 +66,7 @@ pub fn pre_step(
 
             manifold.set_bias(b);
 
-            let e = 0.0;
+            let e = 0.;
 
             let rel_v =
                 (vel_b.0 + angular_linear_velocity_b) - (vel_a.0 + angular_linear_velocity_a);
@@ -110,7 +108,7 @@ pub fn apply_impulses(
     )>,
     manifolds: Res<Manifolds>,
 ) {
-    for _ in 0..8 {
+    for _ in 0..16 {
         for manifold in manifolds.0.iter() {
             let (
                 (mut pos_a, mut vel_a, mut ang_vel_a, inertia_a, mass_a),
@@ -158,12 +156,13 @@ pub fn apply_impulses(
                 let ra_perp_n = ra_perp.dot(manifold.normal);
                 let rb_perp_n = rb_perp.dot(manifold.normal);
 
-                let e = 0.1;
+                let e = 0.;
 
                 let rel_v =
                     (vel_b.0 + angular_linear_velocity_b) - (vel_a.0 + angular_linear_velocity_a);
 
                 let rel_normal_v = rel_v.dot(manifold.normal);
+
                 if rel_normal_v > 0. {
                     continue;
                 }

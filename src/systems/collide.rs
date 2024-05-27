@@ -18,7 +18,7 @@ pub fn find_collisions(
         iter.fetch_next()
     {
         let manifold_result = collisions::obb_obb(
-            entity_a, pos_a.0, rot_a.0, aabb_a, entity_b, pos_b.0, rot_b.0, aabb_b,
+            entity_a, pos_a.0, rot_a.0, mass_a.0, aabb_a, entity_b, pos_b.0, rot_b.0, mass_b.0, aabb_b,
         );
 
         let manifold = match manifold_result.2 {
@@ -26,12 +26,12 @@ pub fn find_collisions(
             None => continue,
         };
 
-        // for point in manifold.contact_points.iter() {
-        //     ev_spawn_dot.send(SpawnDotEvent {
-        //         pos: point.clone(),
-        //         radius: 5.,
-        //     });
-        // }
+        for point in manifold.contact_points.iter() {
+            ev_spawn_dot.send(SpawnDotEvent {
+                pos: point.clone(),
+                radius: 5.,
+            });
+        }
 
         // for point in manifold_result.0.iter() {
         //     ev_spawn_dot.send(SpawnDotEvent {

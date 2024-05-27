@@ -67,32 +67,58 @@ fn init_world(
     //     true,
     // );
     // spawn::spawn_rect_obb(&mut commands, &mut meshes, &mut materials, Vec2::new( 200., 0.), Vec2::new( -80., 0.), 45., Vec2::new(100., 100.), 20., false);
-    spawn::spawn_rect_obb(
-        &mut commands,
-        &mut meshes,
-        &mut materials,
-        Color::rgb(1., 1., 1.),
-        Vec2::new(-500., 0.),
-        Vec2::new(0., 0.),
-        0.,
-        0.,
-        Vec2::new(40., 600.),
-        0.,
-        false,
-    );
-    spawn::spawn_rect_obb(
-        &mut commands,
-        &mut meshes,
-        &mut materials,
-        Color::rgb(1., 1., 1.),
-        Vec2::new(500., 0.),
-        Vec2::new(0., 0.),
-        0.,
-        0.,
-        Vec2::new(40., 600.),
-        0.,
-        false,
-    );
+    // spawn::spawn_rect_obb(
+    //     &mut commands,
+    //     &mut meshes,
+    //     &mut materials,
+    //     Color::rgb(1., 1., 1.),
+    //     Vec2::new(-550., 0.),
+    //     Vec2::new(0., 0.),
+    //     0.,
+    //     0.,
+    //     Vec2::new(40., 600.),
+    //     0.,
+    //     false,
+    // );
+    // spawn::spawn_rect_obb(
+    //     &mut commands,
+    //     &mut meshes,
+    //     &mut materials,
+    //     Color::rgb(1., 1., 1.),
+    //     Vec2::new(550., 0.),
+    //     Vec2::new(0., 0.),
+    //     0.,
+    //     0.,
+    //     Vec2::new(40., 600.),
+    //     0.,
+    //     false,
+    // );
+    // spawn::spawn_rect_obb(
+    //     &mut commands,
+    //     &mut meshes,
+    //     &mut materials,
+    //     Color::rgb(1., 1., 1.),
+    //     Vec2::new(-200., 150.),
+    //     Vec2::new(0., 0.),
+    //     0.,
+    //     -20.,
+    //     Vec2::new(600., 20.),
+    //     0.,
+    //     false,
+    // );
+    // spawn::spawn_rect_obb(
+    //     &mut commands,
+    //     &mut meshes,
+    //     &mut materials,
+    //     Color::rgb(1., 1., 1.),
+    //     Vec2::new(200., -100.),
+    //     Vec2::new(0., 0.),
+    //     0.,
+    //     20.,
+    //     Vec2::new(600., 20.),
+    //     0.,
+    //     false,
+    // );
     spawn::spawn_rect_obb(
         &mut commands,
         &mut meshes,
@@ -102,7 +128,7 @@ fn init_world(
         Vec2::new(0., 0.),
         0.,
         0.,
-        Vec2::new(1000., 40.),
+        Vec2::new(1400., 40.),
         0.,
         false,
     );

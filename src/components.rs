@@ -19,6 +19,9 @@ pub struct ConvexCollider {
 }
 
 #[derive(Component)]
+pub struct Awake(pub bool);
+
+#[derive(Component)]
 pub struct Dot;
 
 impl ConvexCollider {

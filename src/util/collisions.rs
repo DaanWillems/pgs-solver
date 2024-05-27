@@ -155,10 +155,12 @@ pub fn obb_obb(
     entity_a: Entity,
     pos_a: Vec2,
     rot_a: f32,
+    mass_a: f32,
     collider_a: &ConvexCollider,
     entity_b: Entity,
     pos_b: Vec2,
     rot_b: f32,
+    mass_b: f32,
     collider_b: &ConvexCollider,
 ) -> (Vec<Vec2>, Vec<Vec2>, Option<Manifold>) {
     let points_a = ConvexCollider::transform_points(&collider_a.points, pos_a, rot_a);
@@ -213,9 +215,17 @@ pub fn obb_obb(
     }
 
     //There is a collision, lets find the contact points
+    let mut pos_a_collision = pos_a;
+    let mut pos_b_collision = pos_b;
 
-    let pos_a_collision = pos_a - smallest_overlap * mtv;
-    let pos_b_collision = pos_b + smallest_overlap * mtv;
+    if mass_b == 0. {
+        pos_a_collision = pos_a - smallest_overlap * mtv;
+    } else if mass_a == 0. {
+        pos_b_collision = pos_b + smallest_overlap * mtv;
+    } else {
+        pos_b_collision = pos_b + smallest_overlap * mtv;
+        pos_a_collision = pos_a - smallest_overlap * mtv;
+    }
 
     let points_a_collision = ConvexCollider::transform_points(&collider_a.points, pos_a_collision, rot_a);
     let points_b_collision = ConvexCollider::transform_points(&collider_b.points, pos_b_collision, rot_b);
@@ -229,13 +239,13 @@ pub fn obb_obb(
     for p in points_a_collision.iter() {
         for v in edges_b_collision.iter() {
             let (cp, d) = point_segment_distance(v.0, v.1, p);
-            if (d - smallest_dist).abs() < 0.1 {
+            if (d - smallest_dist).abs() < 0.2 {
                 contact_points.push(cp);
                 // println!("{}", (d - smallest_dist).abs());
             } else if d < smallest_dist {
                 contact_points.clear();
                 contact_points.push(cp);
-                smallest_dist = d;
+                smallest_dist = d
             }
         }
     }
@@ -245,7 +255,7 @@ pub fn obb_obb(
     for p in points_b_collision.iter() {
         for v in edges_a_collision.iter() {
             let (cp, d) = point_segment_distance(v.0, v.1, p);
-            if (d - smallest_dist).abs() < 0.1 {
+            if (d - smallest_dist).abs() < 0.2 {
                 contact_points.push(cp);
                 // println!("{}", (d - smallest_dist).abs());
             } else if d < smallest_dist { 

@@ -96,6 +96,7 @@ pub fn spawn_rect_obb(
             Rotation(rot.to_radians()),
             AngularVelocity(ang_vel),
             Inertia(moment_of_inertia),
+            Awake(true),
             ConvexCollider::from_rect(size / 2.),
             MaterialMesh2dBundle {
                 mesh: mesh_handle.into(),

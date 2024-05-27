@@ -56,16 +56,15 @@ pub fn input_handler(
         if keys.pressed(KeyCode::KeyE) {
             rotation.0 -= 0.01;
         }
-    
     }
 
-    if keys.pressed(KeyCode::Space) {
+    if keys.just_pressed(KeyCode::Space) {
         if let Some(world_position) = window
             .cursor_position()
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
             let mut rng = rand::thread_rng();
-            let size = Vec2::new(rng.gen_range(10.0..200.0), rng.gen_range(10.0..200.0));
+            let size = Vec2::new(rng.gen_range(50.0..200.0), rng.gen_range(50.0..200.0));
             // spawn::spawn_circle(&mut commands, &mut meshes, &mut materials, Vec2::new(world_position.x.clone(), world_position.y.clone()), Vec2::new(0.0, 0.0), 40., 20., false);
             spawn::spawn_rect_obb(
                 &mut commands,
@@ -79,6 +78,7 @@ pub fn input_handler(
                 0.,
                 size,
                 size.x*size.y,
+                // 100.,
                 false,
             );
         }
