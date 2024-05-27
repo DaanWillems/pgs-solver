@@ -1,14 +1,14 @@
 use std::u8::MAX;
 
-use bevy::prelude::*;
 use crate::{components, AABBCollider, ConvexCollider, SpawnDotEvent};
+use bevy::prelude::*;
 
 pub struct Contact {
     pub entity_a: Entity,
     pub entity_b: Entity,
     pub overlap: f32,
     pub normal: Vec2,
-    pub bias: f32
+    pub bias: f32,
 }
 
 pub struct Manifold {
@@ -16,7 +16,14 @@ pub struct Manifold {
     pub entity_b: Entity,
     pub overlap: f32,
     pub normal: Vec2,
-    pub contact_points: Vec<Vec2>
+    pub contact_points: Vec<Vec2>,
+    pub bias: f32,
+}
+
+impl Manifold {
+    pub fn set_bias(&mut self, bias: f32) {
+        self.bias = bias;
+    }
 }
 
 impl Contact {
@@ -26,7 +33,7 @@ impl Contact {
             entity_b,
             overlap,
             normal,
-            bias: 0.
+            bias: 0.,
         }
     }
 
@@ -39,7 +46,7 @@ pub fn get_edges(vertices: &Vec<Vec2>) -> Vec<(Vec2, Vec2)> {
     let mut edges = Vec::new();
 
     for i in 0..vertices.len() {
-        edges.push((vertices[i], vertices[(i+1) % vertices.len()]));
+        edges.push((vertices[i], vertices[(i + 1) % vertices.len()]));
     }
 
     return edges;
@@ -73,11 +80,18 @@ pub fn point_segment_distance(a: Vec2, b: Vec2, p: &Vec2) -> (Vec2, f32) {
     } else {
         cp = a + ab * d;
     }
-    
+
     return (cp, Vec2::distance(*p, cp));
 }
 
-pub fn circle_circle(entity_a: Entity, pos_a: Vec2, radius_a: f32, entity_b: Entity, pos_b: Vec2, radius_b: f32) -> Option<Contact> {
+pub fn circle_circle(
+    entity_a: Entity,
+    pos_a: Vec2,
+    radius_a: f32,
+    entity_b: Entity,
+    pos_b: Vec2,
+    radius_b: f32,
+) -> Option<Contact> {
     let ab = pos_b - pos_a;
     let ab_sqr_len = ab.length_squared();
     let combined_radius = radius_a + radius_b;
@@ -87,21 +101,23 @@ pub fn circle_circle(entity_a: Entity, pos_a: Vec2, radius_a: f32, entity_b: Ent
         let normal = (ab / ab_length);
         let penetration_depth = ab_length - combined_radius;
 
-        return Some(Contact::new(
-            entity_a,
-            entity_b,
-            -penetration_depth,
-            normal
-        ));
+        return Some(Contact::new(entity_a, entity_b, -penetration_depth, normal));
     }
 
     return None;
 }
 
-pub fn aabb_aabb_sat(entity_a: Entity, pos_a: Vec2, aabb_a: &AABBCollider, entity_b: Entity, pos_b: Vec2, aabb_b: &AABBCollider) -> Option<Contact> {
+pub fn aabb_aabb_sat(
+    entity_a: Entity,
+    pos_a: Vec2,
+    aabb_a: &AABBCollider,
+    entity_b: Entity,
+    pos_b: Vec2,
+    aabb_b: &AABBCollider,
+) -> Option<Contact> {
     let normal;
-    let mut n_x= Vec2::new(0., 0.);
-    let mut n_y= Vec2::new(0., 0.);
+    let mut n_x = Vec2::new(0., 0.);
+    let mut n_y = Vec2::new(0., 0.);
     let mut pen_depth_x = 0.;
     let mut pen_depth_y = 0.;
     let overlap;
@@ -132,15 +148,19 @@ pub fn aabb_aabb_sat(entity_a: Entity, pos_a: Vec2, aabb_a: &AABBCollider, entit
         overlap = pen_depth_y
     }
 
-    return Some(Contact::new(
-        entity_a,
-        entity_b,
-        overlap,
-        normal
-    ));
+    return Some(Contact::new(entity_a, entity_b, overlap, normal));
 }
 
-pub fn obb_obb(entity_a: Entity, pos_a: Vec2, rot_a: f32, collider_a: &ConvexCollider, entity_b: Entity, pos_b: Vec2, rot_b: f32, collider_b: &ConvexCollider) -> Option<(Vec<Vec2>, Contact)> {
+pub fn obb_obb(
+    entity_a: Entity,
+    pos_a: Vec2,
+    rot_a: f32,
+    collider_a: &ConvexCollider,
+    entity_b: Entity,
+    pos_b: Vec2,
+    rot_b: f32,
+    collider_b: &ConvexCollider,
+) -> (Vec<Vec2>, Vec<Vec2>, Option<Manifold>) {
     let points_a = ConvexCollider::transform_points(&collider_a.points, pos_a, rot_a);
     let points_b = ConvexCollider::transform_points(&collider_b.points, pos_b, rot_b);
 
@@ -149,12 +169,11 @@ pub fn obb_obb(entity_a: Entity, pos_a: Vec2, rot_a: f32, collider_a: &ConvexCol
 
     let axes_a = get_normals(&edges_a);
     let axes_b = get_normals(&edges_b);
-    
+
     let axes = [axes_a, axes_b].concat();
 
     let mut mtv = Vec2::new(0., 0.);
     let mut smallest_overlap = f32::INFINITY;
-
 
     //Do projections:
     for axis in axes {
@@ -168,14 +187,14 @@ pub fn obb_obb(entity_a: Entity, pos_a: Vec2, rot_a: f32, collider_a: &ConvexCol
 
         let mut min_b = f32::INFINITY;
         let mut max_b = -f32::INFINITY;
-        
+
         for point in points_b.iter() {
             min_b = f32::min(min_b, point.dot(axis));
             max_b = f32::max(max_b, point.dot(axis));
         }
 
         if min_a > max_b || max_a < min_b {
-            return None;
+            return (points_a, points_b, None);
         }
 
         if min_a <= max_b {
@@ -191,38 +210,29 @@ pub fn obb_obb(entity_a: Entity, pos_a: Vec2, rot_a: f32, collider_a: &ConvexCol
                 mtv = axis;
             }
         }
-    } 
+    }
 
     //There is a collision, lets find the contact points
+
+    let pos_a_collision = pos_a - smallest_overlap * mtv;
+    let pos_b_collision = pos_b + smallest_overlap * mtv;
+
+    let points_a_collision = ConvexCollider::transform_points(&collider_a.points, pos_a_collision, rot_a);
+    let points_b_collision = ConvexCollider::transform_points(&collider_b.points, pos_b_collision, rot_b);
+
+    let edges_a_collision = get_edges(&points_a_collision);
+    let edges_b_collision = get_edges(&points_b_collision);
 
     let mut smallest_dist = f32::INFINITY;
     let mut contact_points = Vec::new();
 
-    for p in points_a.iter() {
-        for v in edges_b.iter() {
+    for p in points_a_collision.iter() {
+        for v in edges_b_collision.iter() {
             let (cp, d) = point_segment_distance(v.0, v.1, p);
-            if d < smallest_dist {
-                if d == smallest_dist {
-                    contact_points.push(cp);
-                }
-                else if d < smallest_dist {
-                    contact_points.clear();
-                    contact_points.push(cp);
-                    smallest_dist = d;
-                }
-            }
-        }
-    }
-
-    // let mut smallest_dist_b = f32::INFINITY;
-
-    for p in points_b.iter() {
-        for v in edges_a.iter() {
-            let (cp, d) = point_segment_distance(v.0, v.1, p);
-            if d == smallest_dist {
+            if (d - smallest_dist).abs() < 0.1 {
                 contact_points.push(cp);
-            }
-            else if d < smallest_dist {
+                // println!("{}", (d - smallest_dist).abs());
+            } else if d < smallest_dist {
                 contact_points.clear();
                 contact_points.push(cp);
                 smallest_dist = d;
@@ -230,26 +240,50 @@ pub fn obb_obb(entity_a: Entity, pos_a: Vec2, rot_a: f32, collider_a: &ConvexCol
         }
     }
 
+    // let mut smallest_dist_b = f32::INFINITY;
 
-    return Some((contact_points, Contact::new(
-        entity_a, 
+    for p in points_b_collision.iter() {
+        for v in edges_a_collision.iter() {
+            let (cp, d) = point_segment_distance(v.0, v.1, p);
+            if (d - smallest_dist).abs() < 0.1 {
+                contact_points.push(cp);
+                // println!("{}", (d - smallest_dist).abs());
+            } else if d < smallest_dist { 
+                contact_points.clear();
+                contact_points.push(cp);
+                smallest_dist = d;
+            }
+        }
+    }
+
+    return (points_a, points_b, Some(Manifold {
+        entity_a,
         entity_b,
-        smallest_overlap.abs(),
-        mtv,
-    )));
+        overlap: smallest_overlap.abs(),
+        normal: mtv,
+        contact_points,
+        bias: 0.,
+    }));
 }
 
-pub fn aabb_aabb(entity_a: Entity, pos_a: Vec2, aabb_a: &AABBCollider, entity_b: Entity, pos_b: Vec2, aabb_b: &AABBCollider) -> Option<Contact> {
+pub fn aabb_aabb(
+    entity_a: Entity,
+    pos_a: Vec2,
+    aabb_a: &AABBCollider,
+    entity_b: Entity,
+    pos_b: Vec2,
+    aabb_b: &AABBCollider,
+) -> Option<Contact> {
     //Initiate overlap
     let mut overlap = f32::INFINITY;
     let mut normal;
 
     //x axis
-    let proj_min_a = pos_a - aabb_a.half_size; 
-    let proj_max_a = pos_a + aabb_a.half_size; 
+    let proj_min_a = pos_a - aabb_a.half_size;
+    let proj_max_a = pos_a + aabb_a.half_size;
 
-    let proj_min_b = pos_b - aabb_b.half_size; 
-    let proj_max_b = pos_b + aabb_b.half_size; 
+    let proj_min_b = pos_b - aabb_b.half_size;
+    let proj_max_b = pos_b + aabb_b.half_size;
 
     if proj_min_a.x > proj_max_b.x || proj_max_a.x < proj_min_b.x {
         //No overlap on x axis we can exit early
@@ -276,25 +310,25 @@ pub fn aabb_aabb(entity_a: Entity, pos_a: Vec2, aabb_a: &AABBCollider, entity_b:
             normal = Vec2::new(0., -1.);
         }
     }
-    return Some(
-        Contact::new(
-            entity_a,
-            entity_b,
-            overlap,
-            normal
-        )
-    );
+    return Some(Contact::new(entity_a, entity_b, overlap, normal));
 }
 
-pub fn circle_abbb(entity_circle: Entity, circle_pos: Vec2, circle_radius: f32, entity_rect: Entity, rect_pos: Vec2, rect_collider: &components::AABBCollider) -> Option<Contact> {
+pub fn circle_abbb(
+    entity_circle: Entity,
+    circle_pos: Vec2,
+    circle_radius: f32,
+    entity_rect: Entity,
+    rect_pos: Vec2,
+    rect_collider: &components::AABBCollider,
+) -> Option<Contact> {
     let pos_diff = circle_pos - rect_pos;
-    let clamped = pos_diff.clamp(-rect_collider.half_size, rect_collider.half_size) ;
+    let clamped = pos_diff.clamp(-rect_collider.half_size, rect_collider.half_size);
     let closest = rect_pos + clamped;
     let difference = closest - circle_pos;
     if difference.length() < circle_radius {
         let penetration_depth;
         let mut n = Vec2::new(0., 0.);
-        
+
         if clamped.x.abs() == clamped.y.abs() {
             penetration_depth = -(circle_radius - difference.length());
             n = -(circle_pos - closest).normalize();
@@ -311,8 +345,7 @@ pub fn circle_abbb(entity_circle: Entity, circle_pos: Vec2, circle_radius: f32, 
                 if difference.y < 0. {
                     penetration_depth = circle_radius - difference.y.abs();
                     n.y = -1.;
-                }
-                else {
+                } else {
                     penetration_depth = circle_radius - difference.y.abs();
                     n.y = 1.;
                 }
@@ -323,7 +356,8 @@ pub fn circle_abbb(entity_circle: Entity, circle_pos: Vec2, circle_radius: f32, 
             entity_circle,
             entity_rect,
             penetration_depth,
-            n
-        ));    }
+            n,
+        ));
+    }
     return None;
 }

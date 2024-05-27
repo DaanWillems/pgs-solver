@@ -5,17 +5,17 @@ pub struct MainCamera;
 
 #[derive(Component)]
 pub struct CircleCollider {
-    pub radius: f32
+    pub radius: f32,
 }
 
 #[derive(Component)]
 pub struct AABBCollider {
-    pub half_size: Vec2
+    pub half_size: Vec2,
 }
 
 #[derive(Clone, Component)]
 pub struct ConvexCollider {
-    pub points: Vec<Vec2>
+    pub points: Vec<Vec2>,
 }
 
 #[derive(Component)]
@@ -29,13 +29,13 @@ impl ConvexCollider {
         let bottom_left = Vec2::new(-half_size.x, -half_size.y);
 
         let mut points = Vec::new();
-        
+
         points.push(top_left);
         points.push(top_right);
         points.push(bottom_right);
         points.push(bottom_left);
 
-        return ConvexCollider{points};
+        return ConvexCollider { points };
     }
 
     pub fn transform_points(points: &Vec<Vec2>, position: Vec2, rotation: f32) -> Vec<Vec2> {
@@ -60,13 +60,16 @@ pub struct Mass(pub f32);
 pub struct Position(pub Vec2);
 
 #[derive(Component)]
-pub struct Rotation {
-    pub rotation: f32, //In radians
-    pub angular_velocity: f32
-}
+pub struct Velocity(pub Vec2);
 
 #[derive(Component)]
-pub struct Velocity(pub Vec2);
+pub struct Rotation(pub f32);
+
+#[derive(Component)]
+pub struct AngularVelocity(pub f32);
+
+#[derive(Component)]
+pub struct Inertia(pub f32);
 
 #[derive(Component)]
 pub struct Player;
