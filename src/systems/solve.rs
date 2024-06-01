@@ -49,7 +49,7 @@ pub fn pre_step(
         let mut impulses = Vec::new();
 
         for contact_point in manifold.contact_points.clone() {
-            let b = -(0.5 / time.delta_seconds()) * (f32::max(0., manifold.overlap-0.05));
+            let b = -(0.4 / time.delta_seconds()) * (f32::max(0., manifold.overlap-0.2));
 
             let ra = contact_point - pos_a.0;
             let rb = contact_point - pos_b.0;
@@ -108,7 +108,7 @@ pub fn apply_impulses(
     )>,
     manifolds: Res<Manifolds>,
 ) {
-    for _ in 0..16 {
+    for _ in 0..4 {
         for manifold in manifolds.0.iter() {
             let (
                 (mut pos_a, mut vel_a, mut ang_vel_a, inertia_a, mass_a),

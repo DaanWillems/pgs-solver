@@ -80,6 +80,7 @@ pub fn input_handler(
                 size.x*size.y,
                 // 100.,
                 false,
+                rng.gen_range(0.0..10.0)
             );
         }
     }

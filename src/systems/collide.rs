@@ -26,12 +26,12 @@ pub fn find_collisions(
             None => continue,
         };
 
-        for point in manifold.contact_points.iter() {
-            ev_spawn_dot.send(SpawnDotEvent {
-                pos: point.clone(),
-                radius: 5.,
-            });
-        }
+        // for point in manifold.contact_points.iter() {
+        //     ev_spawn_dot.send(SpawnDotEvent {
+        //         pos: point.clone(),
+        //         radius: 5.,
+        //     });
+        // }
 
         // for point in manifold_result.0.iter() {
         //     ev_spawn_dot.send(SpawnDotEvent {

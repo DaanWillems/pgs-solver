@@ -29,12 +29,12 @@ pub fn integrate(
             awake.0 = true;
         } 
 
-        if velocity.0.length() < 0.1 && angular_velocity.0.abs() < 0.01 {
-            velocity.0.x = 0.;
-            velocity.0.y = 0.;
-            angular_velocity.0 = 0.;
-            awake.0 = false;
-        }
+        // if velocity.0.length() < 0.1 && angular_velocity.0.abs() < 0.01 {
+        //     velocity.0.x = 0.;
+        //     velocity.0.y = 0.;
+        //     angular_velocity.0 = 0.;
+        //     awake.0 = false;
+        // }
 
         if awake.0 && mass.0 != 0. {
             velocity.0.y -= 9.81;

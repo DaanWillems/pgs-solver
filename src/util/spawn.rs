@@ -61,6 +61,7 @@ pub fn spawn_rect_obb(
     size: Vec2,
     mass: f32,
     player: bool,
+    z_Level: f32
 ) {
     let shape = Mesh::from(Rectangle {
         half_size: size / 2.,
@@ -90,7 +91,7 @@ pub fn spawn_rect_obb(
     } else {
         commands.spawn((
             Position(pos),
-            ZLevel(0.0),
+            ZLevel(z_Level),
             Velocity(vel + Vec2::new(0., -0.2)),
             Mass(mass),
             Rotation(rot.to_radians()),

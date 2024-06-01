@@ -131,5 +131,6 @@ fn init_world(
         Vec2::new(1400., 40.),
         0.,
         false,
+        12.
     );
 }
