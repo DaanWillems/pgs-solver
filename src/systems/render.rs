@@ -10,6 +10,8 @@ pub fn project_positions(
     }
 }
 
-pub fn spawn_camera(mut commands: Commands) {
+pub fn spawn_camera(mut commands: Commands, mut windows: Query<&mut Window>) {
     commands.spawn((Camera2dBundle::default(), MainCamera));
+    let mut window = windows.single_mut();
+    window.resolution.set(2000., 1000.);
 }

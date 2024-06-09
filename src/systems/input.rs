@@ -64,6 +64,7 @@ pub fn input_handler(
             .and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor))
         {
             let mut rng = rand::thread_rng();
+            // let size = Vec2::new(100., 100.);
             let size = Vec2::new(rng.gen_range(50.0..200.0), rng.gen_range(50.0..200.0));
             // spawn::spawn_circle(&mut commands, &mut meshes, &mut materials, Vec2::new(world_position.x.clone(), world_position.y.clone()), Vec2::new(0.0, 0.0), 40., 20., false);
             spawn::spawn_rect_obb(

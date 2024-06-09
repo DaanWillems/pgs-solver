@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use rand::Rng;
 
 mod components;
 mod resources;
@@ -79,6 +80,7 @@ fn init_world(
     //     Vec2::new(40., 600.),
     //     0.,
     //     false,
+    //     0.
     // );
     // spawn::spawn_rect_obb(
     //     &mut commands,
@@ -92,7 +94,9 @@ fn init_world(
     //     Vec2::new(40., 600.),
     //     0.,
     //     false,
+    //     0.
     // );
+
     // spawn::spawn_rect_obb(
     //     &mut commands,
     //     &mut meshes,
@@ -105,6 +109,7 @@ fn init_world(
     //     Vec2::new(600., 20.),
     //     0.,
     //     false,
+    //     0.
     // );
     // spawn::spawn_rect_obb(
     //     &mut commands,
@@ -118,6 +123,7 @@ fn init_world(
     //     Vec2::new(600., 20.),
     //     0.,
     //     false,
+    //     0.
     // );
     spawn::spawn_rect_obb(
         &mut commands,
@@ -128,9 +134,57 @@ fn init_world(
         Vec2::new(0., 0.),
         0.,
         0.,
-        Vec2::new(1400., 40.),
+        Vec2::new(2400., 40.),
         0.,
         false,
         12.
     );
+    let mut rng = rand::thread_rng();
+    let mut length = 20;
+    let mut x_offset = -100.;
+    for y in 0..20 {
+        let mut x = 0;
+        println!("x {}", x);
+        println!("y {}", y);
+
+        while x < length {
+            println!("x {}", x);
+            let xpos = x as f32 * 40.5;
+            let ypos = y as f32 * 40.;
+            println!("ypos {}", ypos);
+            println!("xpos {}", xpos);
+            spawn::spawn_rect_obb(
+                &mut commands,
+                &mut meshes,
+                &mut materials,
+                Color::rgb(rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)),
+                Vec2::new(xpos-x_offset, -290.+ypos),
+                Vec2::new(0., 0.),
+                0.,
+                0.,
+                Vec2::new(40., 40.),
+                50.,
+                false,
+                20.
+            );
+            x += 1;
+        }
+        x_offset -= 20.;
+        length -= 1;
+    }
+
+    // spawn::spawn_rect_obb(
+    //     &mut commands,
+    //     &mut meshes,
+    //     &mut materials,
+    //     Color::rgb(1., 0., 1.),
+    //     Vec2::new(-500., -150.),
+    //     Vec2::new(0., 0.),
+    //     0.,
+    //     -47.,
+    //     Vec2::new(20., 250.),
+    //     50.,
+    //     false,
+    //     2.
+    // );
 }

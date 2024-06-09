@@ -18,11 +18,21 @@ pub struct Manifold {
     pub normal: Vec2,
     pub contact_points: Vec<Vec2>,
     pub bias: f32,
+    pub accumulated_f_impulse: f32,
+    pub accumulated_n_impulse: f32
 }
 
 impl Manifold {
     pub fn set_bias(&mut self, bias: f32) {
         self.bias = bias;
+    }
+
+    pub fn set_accumulated_friction_impulse(&mut self, new_accumulated_impulse: f32) {
+        self.accumulated_f_impulse = new_accumulated_impulse;
+    }
+
+    pub fn set_accumulated_normal_impulse(&mut self, new_accumulated_impulse: f32) {
+        self.accumulated_n_impulse = new_accumulated_impulse;
     }
 }
 
@@ -273,6 +283,8 @@ pub fn obb_obb(
         normal: mtv,
         contact_points,
         bias: 0.,
+        accumulated_n_impulse: 0.,
+        accumulated_f_impulse: 0.
     }));
 }
 
